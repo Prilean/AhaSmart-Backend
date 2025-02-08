@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
-
+import { User } from '@prisma/client';
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
@@ -17,6 +17,23 @@ export class UsersService {
       console.log(error);
       throw new HttpException('cannot create user', HttpStatus.BAD_REQUEST);
     }
+  }
+
+  async findByEmail(email: string) {
+    return await this.prisma.user.findUnique({
+      where: {
+        email: email,
+      }
+    });
+  }
+  async validateUser(email: string, password: string): Promise<User | null> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: email,
+        password: password,
+      },
+    });
+    return user || null;
   }
 
   //todo find all the users

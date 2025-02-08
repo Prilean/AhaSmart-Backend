@@ -11,9 +11,10 @@ import { RecommendationSchedulesModule } from './recommendation-schedules/recomm
 import { GoalsModule } from './goals/goals.module';
 import { QuestLogsModule } from './quest-logs/quest-logs.module';
 import { QuestsModule } from './quests/quests.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [PrismaModule, UsersModule, FoodCategoryModule, FoodModule, FoodLogsModule, NotificationsModule, RecommendationSchedulesModule, GoalsModule, QuestLogsModule, QuestsModule],
+  imports: [PrismaModule, UsersModule, FoodCategoryModule, FoodModule, FoodLogsModule, NotificationsModule, RecommendationSchedulesModule, GoalsModule, QuestLogsModule, QuestsModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })
