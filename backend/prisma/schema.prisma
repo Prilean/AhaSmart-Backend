@@ -1,0 +1,130 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+enum RoleEnum {
+  USER 
+  ADMIN 
+}
+
+enum StatusEnum {
+  ACTIVE 
+  INACTIVE 
+  PENDING
+}
+
+enum GenderEnum {
+  MALE
+  FEMALE
+}
+
+enum FrequencyEnum {
+  DIALY
+  WEEKLY 
+  MONTHLY
+}
+
+enum Status {
+  COMPLETE
+  INCOMPLETE
+}
+
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+	id Int @id @default(autoincrement())
+	email String @unique
+	firstName String
+  lastName String
+  gender GenderEnum
+  password String
+  point Int? @default(0)
+  role RoleEnum @default(USER)
+  status StatusEnum @default(ACTIVE)
+  foodLog FoodLog[]
+  notification Notification[]
+  recommendation RecommendationSchedule?
+  goal Goal[]
+  questLog QuestLog[]
+}
+
+model FoodCategory {
+  id Int @id @default(autoincrement())
+  title String @unique
+  description String?
+  food Food[]
+}
+
+model Food {
+  id Int @id @default(autoincrement())
+  title String @unique
+  description String?
+  category FoodCategory @relation(fields: [categoryID], references: [id])
+  categoryID Int
+  foodLog FoodLog[]
+}
+
+model FoodLog {
+  id Int @id @default(autoincrement())
+  quantity Float
+  reason String?
+  created_At DateTime @default(now())
+  user User? @relation(fields: [userID], references: [id])
+  userID Int
+  foodLog Food? @relation(fields: [foodLogID], references: [id])
+  foodLogID Int
+}
+
+model Notification {
+  id Int @id @default(autoincrement())
+  description String
+  time DateTime @default(now())
+  user User @relation(fields: [userID], references: [id])
+  userID Int
+}
+
+model RecommendationSchedule {
+  id Int @id @default(autoincrement())
+  time DateTime @default(now())
+  frequency FrequencyEnum @default(WEEKLY)
+  user User? @relation(fields: [userID], references: [id])
+  userID Int @unique
+}
+
+
+model Goal {
+  id Int @id @default(autoincrement())
+  quantity Float
+  description String
+  user User? @relation(fields: [userID], references: [id])
+  userID Int
+}
+
+model QuestLog {
+  id Int @id @default(autoincrement())
+  status Status @default(INCOMPLETE)
+  user User? @relation(fields: [userID], references: [id])
+  completionTime DateTime?
+  userID Int
+  quest Quest? @relation(fields: [questID], references: [id])
+  questID Int
+}
+
+model Quest {
+  id Int @id @default(autoincrement())
+  title String 
+  detail String
+  point Int
+  logs QuestLog[]
+}
